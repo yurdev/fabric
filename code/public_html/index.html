@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%; margin:0" manifest="offline.manifest">
+<head>
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Fabric Test</title>
+    <script src="fabric.min.js"></script>
+</head>
+
+<body style="height:100%; margin:0">
+<canvas id="canvas1"></canvas>
+<script>
+  // Задаем размер Холста во весь экран
+  var _canvas = document.getElementById('canvas1');
+  //_canvas.width = document.body.clientWidth;
+  //_canvas.height = document.body.clientHeight;
+
+  // Создаем оболочку Фабрик-Холст
+  var canvas = new fabric.Canvas('canvas1');
+  canvas.setBackgroundColor('#0A0');
+  // Создаем Круг и добавляем на Холст
+  var circle = new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100 });
+  canvas.add(circle);
+
+  // Создаем элемент Текст
+  var text = new fabric.Text('Let\'s start!', { left: 20, top: 20, selectable: false });
+  canvas.add(text);
+
+  canvas.renderAll(); // Вызываем перерисовку Холста
+
+  var prev = 0;
+  var avg = 0;
+  var num = 0;
+  canvas.on({
+    'mouse:down': function () {
+      var now = new Date().getTime();
+      if (prev !== 0) {
+        if (now - prev < 1000) {
+          avg = (num * avg + (now - prev)) / (num + 1);
+          num = num + 1;
+          text.setText(Math.round(60000 / avg).toString());
+        } else {
+          avg = 0;
+          num = 0;
+          text.setText('?');
+        }
+      }
+      prev = now;
+      console.log("avg = ", parseInt(avg));
+      canvas.renderAll(); // Вызываем перерисовку Холста
+    }
+  });
+</script>
+</body>
+</html>
